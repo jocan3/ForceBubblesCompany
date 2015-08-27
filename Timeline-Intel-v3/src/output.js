@@ -1,45 +1,48 @@
  function outputUpdateYear(yyyy) {
       document.querySelector('#year').value = yyyy;
+      $("#spanYear").text(yyyy);
+
       }
       function outputUpdateMonth(mm) {
       	var month = mm;
       	switch(month){
 	      	case "1": 
-	      		month = "ENE";
+	      		month = "Jan";
 	      		break;
 	      	case "2":
-	      		month = "FEB";
+	      		month = "Feb";
 	      		break;
 	      	case "3": 
-	      		month = "MAR";
+	      		month = "Mar";
 	      		break;
 	      	case "4":
-	      		month = "ABR";
+	      		month = "Apr";
 	      		break;
 	      	case "5": 
-	      		month = "MAY";
+	      		month = "May";
 	      		break;
 	      	case "6":
-	      		month = "JUN";
+	      		month = "Jun";
 	      		break;
 	      	case "7": 
-	      		month = "JUL";
+	      		month = "Jul";
 	      		break;
 	      	case "8":
-	      		month = "AGO";
+	      		month = "Aug";
 	      		break;
 	      	case "9": 
-	      		month = "SET";
+	      		month = "Sep";
 	      		break;
 	      	case "10":
-	      		month = "OCT";
+	      		month = "Oct";
 	      		break;
 	      	case "11": 
-	      		month = "NOV";
+	      		month = "Nov";
 	      		break;
 	      	case "12":
-	      		month = "DIC";
+	      		month = "Dec";
 	      		break;
 	      	}
 	      	document.querySelector('#month').value = month;
+	      	$("#spanMonth").text(month + '-');
       }

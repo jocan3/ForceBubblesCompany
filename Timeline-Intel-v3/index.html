@@ -5,11 +5,11 @@
 
 <title>TEC - Proyecto</title>
 
-<!--  jquery -->
+
 <link rel="stylesheet" href="http://demo.hongkiat.com/html5-range-slider-styles/style.css">
-<script src="./src/jquery.min.js"></script>
-<!-- nav script -->
-<script src="./src/nav.js" type="text/javascript"></script><link type="text/css" rel="stylesheet" href="./src/demo-style.css">
+<link href="./src/bootstrap.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="./src/demo-style.css">
+
 </head>
 
 <body class="chrome">
@@ -24,8 +24,6 @@
 			</div>
 		</div>
 	</div>
-
-
 <!-- nav script -->
 	<div class="demo-meta">
 		<h1 class="demo-title">Adquisición de Talento - Intel</h1>
@@ -33,7 +31,9 @@
 	</div>
 
 <!-- demo content -->
-	<div id="graphMenu">
+<div class="row">
+	<div class="col-md-2" ></div>
+	<div id="graphMenu" class="col-md-3">
 		<div class="oscar">
 			<input id="years" type="range" min=2006 max=2015 name="years" step="1" oninput="outputUpdateYear(value)" value=2006>
 			<output for=fader id="year">2006</output>
@@ -44,10 +44,19 @@
 		</div>
 		<button id="back"></button><button id="next"></button>
 	</div>
-	<div id="graph" class="demo-wraper">
+	<div id="graph" class="demo-wraper col-md-5">
 		<div id="chart"></div>
+		<div id="TotalEmployees"></div>
+		<div id="CurrentPeriod"><span id="spanMonth"></span><span id="spanYear"></span></div>
 	</div>
+	<div class="col-md-2" ></div>
+</div>
+	<!--  jquery -->
+	<script src="./src/jquery.min.js"></script>
+	<!-- nav script -->
+	<script src="./src/nav.js" type="text/javascript"></script>
 	<script src="./src/d3.js"></script>
+	<script src="./src/bootstrap.js"></script>
 	<script src="./src/underscore.js"></script>
     <script src="./src/forceBubble.js"></script>
     <script src="./src/navigator.js"></script>

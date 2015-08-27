@@ -1,63 +1,16 @@
 d3.csv('data/intel.csv', function (error, data) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		var allData = data;
 		var dataEntered = data;
 		var dataRemoved = data;
-		
+
+		var nextButtonPressed=false;
+		var totalEmployeesInBizGroup = {};
+		var totalEmployeesHiredInBizGroup = {};
+		var totalEmployeesTerminatedInBizGroup = {};
+		var totalEmployeesIntel = 0;
+
+		var lastVarname = "A2006_10";
+
 		var nodeRadius=2.5;
 	  
         var width = 600, height = 450;
@@ -154,10 +107,12 @@ d3.csv('data/intel.csv', function (error, data) {
 			outputUpdateMonth(month.value);
 			//$( "#years" ).trigger("change");
 			$( "#months" ).trigger("change");
+
 			
         });
 		
 		$( "#next" ).click(function() {
+			nextButtonPressed = true;
 		    var year = document.getElementById('years');
 			var month = document.getElementById('months');
 		
@@ -199,15 +154,18 @@ d3.csv('data/intel.csv', function (error, data) {
 		  filterData(varname);
           var centers = getCenters(varname, [600, 400]);
           force.on("tick", tick(centers, varname));
-          labels(centers)
+          labels(centers);
           force.start();
         }
 
         function tick (centers, varname) {
           var foci = {};
           for (var i = 0; i < centers.length; i++) {
-            foci[centers[i].name] = centers[i];
-          }
+            foci[centers[i].name] = centers[i];   
+            var name = centers[i].name;        
+			totalEmployeesInBizGroup[name] = 0;
+		    totalEmployeesHiredInBizGroup[name] = 0;
+		    totalEmployeesTerminatedInBizGroup[name] = 0;         }
 		  
 		  for (var j = 0; j < data.length; j++) {
 			  data[j].radius = nodeRadius;
@@ -219,20 +177,16 @@ d3.csv('data/intel.csv', function (error, data) {
           .data(data, function(d){return d.Identifier;});		
 			
 		  //nodes.attr("class", function (d){++beforeAdd; return "update";});		  
-		   nodes.style("fill", function (d) { return fill(d[varname+'_BizGroup']); })
+		   nodes.style("fill", function (d) { CountTotals(totalEmployeesInBizGroup,d[varname+'_BizGroup']); return fill(d[varname+'_BizGroup']); })
 		
 		console.log('beforeAdd');
 			console.log(beforeAdd);
 		
 			var afterAdd = 0;
-		nodes.enter().append("circle")
-          .attr("class", function (d){afterAdd++; return "enter";})
+		var nodesEnterStyle = nodes.enter().append("circle")          
           .attr("cx", function (d) { return d.x; })//{ d.x = Math.random() * width; return d.x; })
           .attr("cy", function (d) { return d.y; })//{ d.y = Math.random() * height; return d.y; })
-          .attr("r", function (d) { return d.radius; })		  
-          .on("mouseover", function (d) { showPopover.call(this, d); })
-          .on("mouseout", function (d) { removePopovers(); });
-		  
+          .attr("r", function (d) { CountTotals(totalEmployeesHiredInBizGroup,d[varname+'_BizGroup']); return d.radius; })		            		 			
 		  
 		  console.log('AfterAdd');
 			console.log(afterAdd);
@@ -242,7 +196,7 @@ d3.csv('data/intel.csv', function (error, data) {
 		  var beforeRemove = 0;
 		  
 		   nodes.exit()
-		   .attr("class", function (d){++beforeRemove; return "update";})	
+		   .attr("class", function (d){ CountTotals(totalEmployeesTerminatedInBizGroup,d[lastVarname+'_BizGroup']);  return "update";})	
 		   .remove();
 		 // console.log(nodesEnter);
 		  
@@ -250,9 +204,19 @@ d3.csv('data/intel.csv', function (error, data) {
 		console.log('beforeRemove');
 			console.log(beforeRemove);
 		
+		  if (nextButtonPressed){
+				nodesEnterStyle.attr("class", function (d){ return "enter";})
+				nodes.on("mouseover", function (d) { showPopover.call(this, d, d[varname+'_BizGroup']); })
+          		nodes.on("mouseout", function (d) { removePopovers(); });
+			}else{
+				nodesEnterStyle.style("fill", function (d) { return fill(d[varname+'_BizGroup']); });
+
+			}
+
 		  
-	
-		  
+		  nextButtonPressed = false;
+		  lastVarname = varname;
+
           return function (e) {
             for (var i = 0; i < data.length; i++) {
               var o = data[i];
@@ -271,7 +235,7 @@ d3.csv('data/intel.csv', function (error, data) {
         function labels (centers) {
           svg.selectAll(".label").remove();
 
-          svg.selectAll(".label")
+          var labelStyle = svg.selectAll(".label")
           .data(centers).enter().append("text")
           .attr("class", "label")
 		  .attr("fill", "white")
@@ -283,36 +247,48 @@ d3.csv('data/intel.csv', function (error, data) {
             //return "translate(" + (d.x + (d.dx / 2)) + ", " + (d.y + 20) + ")";
 			return "translate(" + (d.x - ((nm.length)*3)) + ", " + (d.y - d.r) + ")";
           });
+
+
         }
+
+        function CountTotals(array, bizgroup){
+        	array[bizgroup]++;
+        }
+
 
         function removePopovers () {
-          /*$('.popover').each(function() {
+          $('.popover').each(function() {
             $(this).remove();
-          });*/ 
+          });
         }
 
-        function showPopover (d) {
-          /*$(this).popover({
+        function showPopover (d, bizgroup) {
+          $(this).popover({
             placement: 'auto top',
             container: 'body',
             trigger: 'manual',
             html : true,
             content: function() { 
-              return "Make: " + d.make + "<br/>Model: " + d.model + "<br/>Drive: " + d.drive +
-                     "<br/>Trans: " + d.trans + "<br/>MPG: " + d.comb; }
+              return "<b><i>" + bizgroup + "</i></b><br/>Total employees: " + (totalEmployeesInBizGroup[bizgroup] + totalEmployeesHiredInBizGroup[bizgroup]) + 
+              		 "<br/>Total hires: " + totalEmployeesHiredInBizGroup[bizgroup] +
+                     "<br/>Total terminations: " + totalEmployeesTerminatedInBizGroup[bizgroup]}
           });
-          $(this).popover('show')*/
+          $(this).popover('show')
         }
 		
 		function filterData(varname){			
+			totalEmployeesIntel = 0;
 			data = allData.filter(function(d, i) 
-			{ 
+			{ 				
 				if (d[varname+'_BizGroup'] != '' && d[varname+'_BizGroup'] != undefined) 
 				{ 
+					++totalEmployeesIntel;
 					return d; 
 				} 
 
 			})
+
+			$('#TotalEmployees').text(totalEmployeesIntel + " Employees");
 		}
 
         function collide(alpha) {
@@ -342,69 +318,6 @@ d3.csv('data/intel.csv', function (error, data) {
           };
         }
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

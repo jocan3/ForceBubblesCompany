@@ -1,58 +1,23 @@
 d3.csv('data/intel.csv', function (error, data) {
 
+		var BizGroups = [
+		"Legal",
+			"Mobility",
+			"Digit. Enterp.",
+			"Arquitecture",
+			"Platform Engineering",
+			"Manufacturing",
+			"Soft Serv",
+			"HR",
+			"Finance",
+			"IT",
+			"Communic",
+			"Datacenter",
+			"Sales Market",
+			"Capital"
+			];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		printCenters(BizGroups);
 
 		var allData = data;
 		var dataEntered = data;
@@ -102,9 +67,7 @@ d3.csv('data/intel.csv', function (error, data) {
             return {name: d, value: (getCenterAge(d))+4, r: 1000};
           });
 		  
-		  
-		  
-		  console.log(centers);
+		  //console.log(centers);
 
           map = d3.layout.pack().size(size);
 		  map.padding(1000);
@@ -180,14 +143,18 @@ d3.csv('data/intel.csv', function (error, data) {
 		$("#years").on("change", function() { 
 			var year = document.getElementById('years');
 			var month = document.getElementById('months');
+			document.getElementById('FilterBy').style.display = "block";
 			draw('A'+year.value + '_' + month.value);
 		});
 		
 		$("#months").on("change", function() { 
 			var year = document.getElementById('years');
 			var month = document.getElementById('months');
+			document.getElementById('FilterBy').style.display = "block";
 			draw('A'+year.value + '_' + month.value);
 		});
+
+
 		
 		/*function callDraw(){
 			var year = document.getElementById('years');
@@ -198,9 +165,23 @@ d3.csv('data/intel.csv', function (error, data) {
         function draw (varname) {
 		  filterData(varname);
           var centers = getCenters(varname, [600, 400]);
+          //printCenters(centers);
+          //console.log(centers.length);
           force.on("tick", tick(centers, varname));
           labels(centers)
           force.start();
+        }
+
+
+        function printCenters(centers){
+        	var filterDiv = $("#FilterBy").empty();
+        	var html = "";
+	        for (var i = centers.length - 1; i >= 0; i--) {
+	        	html = html + "<input id='BizGroup" + i + "' type='checkbox' name="+centers[i].replace(' ','_')+ " value="+centers[i]+ " checked=true /> "+centers[i]+ " <br/>";    	
+	        };
+	        
+	        $( html ).appendTo( filterDiv );
+	        console.log(html);
         }
 
         function tick (centers, varname) {
@@ -221,8 +202,8 @@ d3.csv('data/intel.csv', function (error, data) {
 		  //nodes.attr("class", function (d){++beforeAdd; return "update";});		  
 		   nodes.style("fill", function (d) { return fill(d[varname+'_BizGroup']); })
 		
-		console.log('beforeAdd');
-			console.log(beforeAdd);
+		//console.log('beforeAdd');
+			//console.log(beforeAdd);
 		
 			var afterAdd = 0;
 		nodes.enter().append("circle")
@@ -234,8 +215,8 @@ d3.csv('data/intel.csv', function (error, data) {
           .on("mouseout", function (d) { removePopovers(); });
 		  
 		  
-		  console.log('AfterAdd');
-			console.log(afterAdd);
+		  //console.log('AfterAdd');
+			//console.log(afterAdd);
 		  
 		 //.style("fill", '#FFB607');
 		  
@@ -247,8 +228,8 @@ d3.csv('data/intel.csv', function (error, data) {
 		 // console.log(nodesEnter);
 		  
 		  
-		console.log('beforeRemove');
-			console.log(beforeRemove);
+		//console.log('beforeRemove');
+			//console.log(beforeRemove);
 		
 		  
 	
@@ -306,13 +287,17 @@ d3.csv('data/intel.csv', function (error, data) {
 		
 		function filterData(varname){			
 			data = allData.filter(function(d, i) 
-			{ 
-				if (d[varname+'_BizGroup'] != '' && d[varname+'_BizGroup'] != undefined) 
+			{
+				if (d[varname+'_BizGroup'] != '' && d[varname+'_BizGroup'] != undefined && $("input[name='" + d[varname + '_BizGroup' ].replace(' ','_') + "'] ")[0] != undefined && $("input[name='" + d[varname + '_BizGroup' ].replace(' ','_') + "'] ")[0].checked == true) 
 				{ 
 					return d; 
 				} 
 
 			})
+		}
+
+		function onChange(cbID){
+
 		}
 
         function collide(alpha) {

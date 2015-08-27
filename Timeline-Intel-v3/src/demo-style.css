@@ -473,8 +473,14 @@ div.nav-menu .next a {
 }
 
 /* Demo Front Page Style */
-.oscar {
+div.oscar {
     margin: 20px;
+}
+
+input[type="checkbox"] {
+    margin: 10px;
+    text-align: center;
+    vertical-align:middle;
 }
 
 .demo-body {
